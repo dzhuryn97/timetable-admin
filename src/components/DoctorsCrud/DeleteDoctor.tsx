@@ -12,7 +12,7 @@ const DoctorDeleteMutation = graphql(/* GraphQL */`
     }
 `)
 
-export default function DeleteDoctorButton({id}: {
+export default function     DeleteDoctorButton({id}: {
     id: string
 }) {
     const queryClient = useQueryClient();
@@ -24,7 +24,10 @@ export default function DeleteDoctorButton({id}: {
         const result = await executeQuery(DoctorDeleteMutation, {
             id: id
         })
-        if (!result.data?.deleteDoctor?.id) {
+
+
+
+        if (result.errors.hasError('deleteDoctor')) {
             throw new Error('Deleting doctor error');
         }
     }

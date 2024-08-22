@@ -4,8 +4,9 @@ import {Button, Table, Tbody, Td, Th, Thead, Tr} from "@chakra-ui/react";
 
 import {useState} from "react";
 import Pagination from "../../components/Pagination";
-import {NavLink} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import DeleteDoctorButton from "../../components/DoctorsCrud/DeleteDoctor";
+import LinkButton from "../../components/LinkButton";
 
 export default function List(){
 
@@ -18,7 +19,8 @@ export default function List(){
            doctors: paginationDoctors(first: $pageSize, page: $page) {
                 data {
                     id,
-                    name
+                    name,
+                    description
                 },
                paginatorInfo {
                    total
@@ -37,7 +39,8 @@ export default function List(){
     const DoctorList = data?.doctors.data.map(function (doctor) {
         return <Tr>
             <Td>{ doctor.name }</Td>
-
+            <Td><LinkButton to={"/doctor/"+doctor.id} >Edit</LinkButton></Td>
+            <Td><LinkButton colorScheme={"yellow"} to={"/doctor/"+doctor.id+"/day-slots"} >Schedule</LinkButton></Td>
             <Td><DeleteDoctorButton id={doctor.id} /></Td>
         </Tr>
     })
@@ -52,7 +55,12 @@ export default function List(){
         <Table >
             <Thead>
                 <Tr>
-                    <Th>name</Th>
+                    <Th>Name</Th>
+                </Tr>
+                <Tr>
+                    <Th>Edit</Th>
+                    <Th>Schedule</Th>
+                    <Th>Delete</Th>
                 </Tr>
             </Thead>
             <Tbody>

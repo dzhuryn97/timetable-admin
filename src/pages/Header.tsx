@@ -1,16 +1,18 @@
 import {
     Avatar,
     Box,
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink, Button,
     Heading, List, ListItem,
-    Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader,
+    Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverHeader,
     PopoverTrigger
 } from "@chakra-ui/react";
 import {NavLink} from "react-router-dom";
+import {useContext} from "react";
+import {AuthContext} from "../context/AuthContext";
 
 export default function Header(){
+
+    const authContext = useContext(AuthContext);
+
     return <Box
         as={"header"}
         display={"flex"}
@@ -18,38 +20,22 @@ export default function Header(){
         p={"10px"}
     >
         <Box>
-            <Breadcrumb>
-                <BreadcrumbItem>
-                    <BreadcrumbLink href='#'>Home</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem>
-                    <BreadcrumbLink href='#'>Docs</BreadcrumbLink>
-                </BreadcrumbItem>
-
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
-
             <Heading>Main Dashboard</Heading>
         </Box>
         <Box
         >
             <Popover>
                 <PopoverTrigger>
-                    <Avatar name='Dan Abrahmov'  />
+                    <Avatar name={authContext.authUser?.name}  />
                 </PopoverTrigger>
                 <PopoverContent>
                     <PopoverArrow />
-                    <PopoverHeader>Hey, Dan Abrahmov</PopoverHeader>
+                    <PopoverHeader>Hey, {authContext.authUser?.name}</PopoverHeader>
                     <PopoverBody>
                         <List>
+
                             <ListItem>
-                                <NavLink to={'/profile'}>Profile</NavLink>
-                            </ListItem>
-                            <ListItem>
-                                <NavLink to={'/logut'}>Logout</NavLink>
+                                <NavLink to={'/logout'}>Logout</NavLink>
                             </ListItem>
                         </List>
                     </PopoverBody>

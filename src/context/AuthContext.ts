@@ -1,12 +1,12 @@
 import {createContext, Dispatch, SetStateAction} from "react";
-import AuthUser from "../models/AuthUser";
+import AuthToken from "../models/AuthToken";
 
 interface AuthContextProps {
-    authUser: AuthUser | null
-    setAuthUser: Dispatch<SetStateAction<AuthUser | null>>
+    authUser: AuthToken | null
+    setAuthUser: Dispatch<SetStateAction<AuthToken | null>>
 }
 
 export const AuthContext = createContext<AuthContextProps>({
     authUser: null,
-    setAuthUser: (prevState: SetStateAction<AuthUser | null>) => prevState
+    setAuthUser: (prevState: SetStateAction<AuthToken | null>) => prevState
 });

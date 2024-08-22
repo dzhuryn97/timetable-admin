@@ -5,7 +5,7 @@ import {graphql} from '../../gql'
 
 import {executeQuery, grabError, useGraphQL} from "../../hooks/useGraphQL";
 import {AuthContext} from '../../context/AuthContext';
-import AuthUser from '../../models/AuthUser';
+import AuthToken from '../../models/AuthToken';
 import {GraphQLError} from "graphql/error";
 
 export default function Login() {
@@ -19,7 +19,11 @@ export default function Login() {
 
     const LoginQuery = graphql(/* GraphQL */ `
         query Login($email: String!, $password: String!)  {
-            login(email: $email, password: $password)
+            login(email: $email, password: $password) {
+                name,
+                token,
+                role
+            }
         }
     `)
 
@@ -31,21 +35,26 @@ export default function Login() {
             password: password
         });
 
-        if (res.data) {
-            const data = res.data;
-            authContext.setAuthUser(() => new AuthUser(
-                data.login,
-                "Test Name"
-            ));
-            sessionStorage.setItem("authToken",data.login)
-            sessionStorage.setItem("authName","Test Name")
-        } else {
-            const error = grabError("login",res.errors);
-            setError(()=>error)
+        if(res.errors.count()){
+            const error = res.errors.first();
+            setError(error.message)
+            return;
         }
+        const data = res.data.login;
+
+        authContext.setAuthUser(() => new AuthToken(
+            data.token,
+            data.name,
+            data.role
+        ));
+
+        sessionStorage.setItem("authToken", data.token)
+        sessionStorage.setItem("authName", data.name)
+        sessionStorage.setItem("authRole", data.role)
+
+
     }
 
-    console.log(authContext.authUser)
     if(authContext.authUser){
         return <Navigate to={"/"} />
     }

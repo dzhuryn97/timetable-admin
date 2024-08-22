@@ -7,7 +7,7 @@ export default function ProtectedRoute(){
 
 
     if(!authContext.authUser){
-        // return <Navigate to="/login" />
+        return <Navigate to="/login" />
 
     }
     return <Outlet/>

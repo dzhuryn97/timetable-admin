@@ -20,6 +20,11 @@ export class Notification {
 
 }
 
+interface SuccessMessageAction {
+    type: "success",
+    message: string
+}
+
 interface AddMessageAction {
     type: "add",
     messageType: NotificationType,
@@ -33,9 +38,13 @@ interface RemoveMessageAction {
 
 type NotificationState = Notification[];
 
-type NotificationActionTypes = AddMessageAction  | RemoveMessageAction;
+type NotificationActionTypes = AddMessageAction  | RemoveMessageAction | SuccessMessageAction;
 const notificationReducer = (state: NotificationState, action: NotificationActionTypes) => {
     switch (action.type) {
+        case 'success':
+            return [...state,
+                new Notification(NotificationType.SUCCESS, action.message)
+            ];
         case 'add':
             return [...state,
                 new Notification(action.messageType,action.message)
@@ -57,6 +66,31 @@ export function useNotifications() {
 export function useNotificationsDispatch() {
     return useContext(NotificationsDispatchContext)
 }
+
+export function useDispatchSuccessNotification(){
+    const dispatcher = useContext(NotificationsDispatchContext);
+
+    return (message: string) => {
+        dispatcher({
+            type: 'add',
+            messageType: NotificationType.SUCCESS,
+            message: message
+        })
+    }
+}
+
+export function useDispatchErrorNotification(){
+    const dispatcher = useContext(NotificationsDispatchContext);
+
+    return (message: string) => {
+        dispatcher({
+            type: 'add',
+            messageType: NotificationType.ERROR,
+            message: message
+        })
+    }
+}
+
 
 export  function NotificationProvider({ children } : {
     children:ReactNode
