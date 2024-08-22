@@ -7,7 +7,7 @@
 src/gql
 # testing
 /coverage
-
+.idea
 # production
 /build
 
