@@ -1,57 +1,59 @@
-import {graphql} from "../../gql";
-import {executeQuery} from "../../hooks/useGraphQL";
-import {Notification, NotificationType, useNotificationsDispatch} from "../NotificationShower";
+import { useQueryClient } from "@tanstack/react-query";
+import { graphql } from "../../gql";
+import { executeQuery } from "../../hooks/useGraphQL";
 import DeleteButton from "../DeleteButton";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {
+  NotificationType,
+  useNotificationsDispatch,
+} from "../NotificationShower";
 
-const DoctorDeleteMutation = graphql(/* GraphQL */`
-    mutation DoctorDelete($id: ID!){
-        deleteDoctor(id: $id){
-            id
-        }
+const DoctorDeleteMutation = graphql(/* GraphQL */ `
+  mutation DoctorDelete($id: ID!) {
+    deleteDoctor(id: $id) {
+      id
     }
-`)
+  }
+`);
 
-export default function     DeleteDoctorButton({id}: {
-    id: string
-}) {
-    const queryClient = useQueryClient();
+export default function DeleteDoctorButton({ id }: { id: string }) {
+  const queryClient = useQueryClient();
 
+  const notificationDispatch = useNotificationsDispatch();
 
-    const notificationDispatch = useNotificationsDispatch();
+  async function deleteDoctor(id: string): Promise<void> {
+    const result = await executeQuery(DoctorDeleteMutation, {
+      id: id,
+    });
 
-    async function deleteDoctor(id: string): Promise<void>{
-        const result = await executeQuery(DoctorDeleteMutation, {
-            id: id
-        })
-
-
-
-        if (result.errors.hasError('deleteDoctor')) {
-            throw new Error('Deleting doctor error');
-        }
+    if (result.errors.hasError("deleteDoctor")) {
+      throw new Error("Deleting doctor error");
     }
+  }
 
-
-    async function handleDoctorDeleting(id: string) {
-        try {
-            await deleteDoctor(id)
-            notificationDispatch({
-                type: 'add',
-                messageType: NotificationType.SUCCESS,
-                message: 'Doctor removed',
-            })
-            queryClient.invalidateQueries()
-        } catch (e) {
-            notificationDispatch({
-                type: 'add',
-                messageType: NotificationType.ERROR,
-                message: 'Removing error'
-            })
-        }
+  async function handleDoctorDeleting(id: string) {
+    try {
+      await deleteDoctor(id);
+      notificationDispatch({
+        type: "add",
+        messageType: NotificationType.SUCCESS,
+        message: "Doctor removed",
+      });
+      queryClient.invalidateQueries();
+    } catch (e) {
+      notificationDispatch({
+        type: "add",
+        messageType: NotificationType.ERROR,
+        message: "Removing error",
+      });
     }
+  }
 
-    return <DeleteButton onDelete={()=>{
-        handleDoctorDeleting(id)
-    }} title={'Remove doctor?'}/>;
+  return (
+    <DeleteButton
+      onDelete={() => {
+        handleDoctorDeleting(id);
+      }}
+      title={"Remove doctor?"}
+    />
+  );
 }

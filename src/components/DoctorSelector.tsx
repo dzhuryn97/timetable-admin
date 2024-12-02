@@ -1,43 +1,44 @@
-import {FragmentType, graphql, useFragment} from "../gql";
-import React, {ChangeEvent, useState} from "react";
-import {Box, FormControl, Input, Select} from "@chakra-ui/react";
-import {useGraphQL} from "../hooks/useGraphQL";
-
+import { Box, Select } from "@chakra-ui/react";
+import { ChangeEvent } from "react";
+import { FragmentType, graphql, useFragment } from "../gql";
 
 const DoctorSelectorDoctor = graphql(`
-    fragment  DoctorSelectorDoctor on Doctor{
-        id,
-        name
-    }
-`)
+  fragment DoctorSelectorDoctor on Doctor {
+    id
+    name
+  }
+`);
 
-interface DoctorSelectorProps{
-    doctors?: FragmentType<typeof DoctorSelectorDoctor>[]
-    selectedId?: string | null
-    onChange?: (id: string|null) => void
+interface DoctorSelectorProps {
+  doctors?: FragmentType<typeof DoctorSelectorDoctor>[];
+  selectedId?: string | null;
+  onChange?: (id: string | null) => void;
 }
-export default function DoctorSelector(props: DoctorSelectorProps){
+export default function DoctorSelector(props: DoctorSelectorProps) {
+  const doctors = useFragment(DoctorSelectorDoctor, props.doctors);
 
-    const doctors = useFragment(DoctorSelectorDoctor, props.doctors);
+  if (!doctors) {
+    return <></>;
+  }
 
-    if(!doctors){
-        return  <></>
+  function handleOnChange(e: ChangeEvent<HTMLSelectElement>) {
+    if (props.onChange) {
+      props.onChange(e.target.value ? e.target.value : null);
     }
+  }
 
-    function handleOnChange(e: ChangeEvent<HTMLSelectElement>){
-        if(props.onChange){
-            props.onChange(e.target.value?e.target.value:null)
-        }
-    }
-
-    return <Box>
-        <Select defaultValue={props.selectedId ?? ''}
-            onChange={handleOnChange}
-        >
-            <option>------</option>
-            {doctors.map(function (doctor, index){
-                return <option key={index} value={doctor.id}>{doctor.name}</option>
-            })}
-        </Select>
+  return (
+    <Box>
+      <Select defaultValue={props.selectedId ?? ""} onChange={handleOnChange}>
+        <option>------</option>
+        {doctors.map(function (doctor, index) {
+          return (
+            <option key={index} value={doctor.id}>
+              {doctor.name}
+            </option>
+          );
+        })}
+      </Select>
     </Box>
+  );
 }

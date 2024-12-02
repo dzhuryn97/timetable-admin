@@ -1,35 +1,29 @@
-import {useLoaderData} from "react-router-dom";
-import {graphql} from "../../gql";
-import {executeQuery, GQValidationError} from "../../hooks/useGraphQL";
-import {GetDoctorByIdQuery, StatusEnum, UpdateDoctorMutationVariables} from "../../gql/graphql";
-import {uploadFile} from "../../components/ImageUploader";
-import {NotificationType, useNotificationsDispatch} from "../../components/NotificationShower";
-import {DaySlotTemplateModel, DoctorModel} from "../../components/DoctorsCrud/Models";
-import {DoctorForm, FormValues} from "../../components/DoctorsCrud/Form/DoctorForm";
+import { useLoaderData } from "react-router-dom";
 import EditDoctor from "../../components/DoctorsCrud/EditDoctor";
-
+import { graphql } from "../../gql";
+import { GetDoctorByIdQuery } from "../../gql/graphql";
+import { executeQuery } from "../../hooks/useGraphQL";
 
 export async function getDoctor(doctorId: string) {
-   const DoctorQuery = graphql(/* GraphQL */ `
-      query GetDoctorById($id: ID) {
-         doctor(id: $id) {
-            ...EditDoctorFragment
-         }
+  const DoctorQuery = graphql(/* GraphQL */ `
+    query GetDoctorById($id: ID) {
+      doctor(id: $id) {
+        ...EditDoctorFragment
       }
-   `)
+    }
+  `);
 
-   const response =  await executeQuery(DoctorQuery, {id: doctorId});
+  const response = await executeQuery(DoctorQuery, { id: doctorId });
 
-   if(response.errors.count()){
-      throw new Error(response.errors.first().message);
-   }
+  if (response.errors.count()) {
+    throw new Error(response.errors.first().message);
+  }
 
-   return response.data;
+  return response.data;
 }
 
-
 export default function Edit() {
-    const response = useLoaderData() as GetDoctorByIdQuery;
+  const response = useLoaderData() as GetDoctorByIdQuery;
 
-    return <EditDoctor doctor={response.doctor}/>
+  return <EditDoctor doctor={response.doctor} />;
 }

@@ -1,15 +1,14 @@
-import {UserRoleEnum} from "../gql/graphql";
+import { UserRoleEnum } from "../gql/graphql";
 
 class AuthToken {
-    token: string
-    name: string
-    role: UserRoleEnum;
+  token: string;
+  name: string;
+  role: UserRoleEnum;
 
-    constructor(token: string, name: string, role: UserRoleEnum) {
-        this.token = token;
-        this.name = name;
-        this.role = role;
-    }
-
+  constructor(token: string, name: string, role: UserRoleEnum) {
+    this.token = token;
+    this.name = name;
+    this.role = role;
+  }
 }
 export default AuthToken;
